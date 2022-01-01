@@ -1,14 +1,14 @@
 from requests import status_codes
 from fastapi import FastAPI, Header, HTTPException
-from korovka.models import DisplayMood
-from korovka.models import User, Dashboard, Mood, DashboardMood, MoodBody
+from models import DisplayMood
+from models import User, Dashboard, Mood, DashboardMood, MoodBody
 from odmantic import AIOEngine
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import datetime
 import requests
 from fastapi.middleware.cors import CORSMiddleware
-from korovka.utils import get_email
+from utils import get_email
 import bson
 
 app = FastAPI()
@@ -123,7 +123,7 @@ async def dashboard(access_token: str = Header(None, convert_underscores=False))
     return dashboard
 
 
-vibes = {
+vibes_dict = {
     'Uplifting': ['yellow-100', 'yellow-300'],
     'Romantic': ['red-200', 'red-400'],
     'Calm': ['blue-200', 'blue-400'],
@@ -131,11 +131,17 @@ vibes = {
     'Eclectic': ['purple-300', 'purple-500'],
     'Energetic': ['orange-400', 'orange-600']
 }
-
+vibes = [{'name': k, 'colors': v} for k, v in vibes.items()]
 
 @app.get('/api/vibes')
-async def get_vibes():      
-    return [{'name': k, 'colors': v} for k, v in vibes.items()]
+async def get_vibes(access_token: str = Header(None, convert_underscores=False)):
+    if access_token is None:
+        return vibes
+    
+
+@app.post('/api/vibes')
+async def create_vibe(access_token: str = Header(None, convert_underscores=False)):
+    
 
 
 @app.post('/api/mood')
