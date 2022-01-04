@@ -1,6 +1,6 @@
-from fastapi import FastAPI, Header, HTTPException
+from fastapi import HTTPException
 import requests
-import bson
+
 
 def get_email(cache: dict, token: str):
     if token in cache.keys():
