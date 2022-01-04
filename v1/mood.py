@@ -2,7 +2,7 @@
 from fastapi import Header, HTTPException, APIRouter
 from korovka.v1.utils import verify_mood_owner
 # models and utils imports
-from v1.schemas import DisplayMood, MoodBody
+from v1.schemas import DisplayMood, MoodBody, PlaylistBody
 from v1.models import Mood
 from v1.utils import get_email, get_user
 from v1.db import engine, token_to_id
@@ -192,19 +192,51 @@ async def set_main_song(
         mood.main_song = song_id
     else:
         mood.main_song = song_id
-    engine.save(mood)
+    await engine.save(mood)
     return {'added': song_id}
 
 
 @router.post('/{mood_id}/playlist/generate')
 async def convert_to_playlist(
     mood_id: str,
+    playlist: PlaylistBody,
     access_token: str = Header(None, convert_underscores=False)
 ):
     curr_user = await get_user(get_email(token_to_id, access_token))
-    search_resp = requests.get(
-        'https://api.spotify.com/v1/search',
+    mood = await engine.find_one(Mood, Mood.id == bson.ObjectId(mood_id))
+    verify_mood_owner(mood, curr_user, mood_id)
+    gen_plist_resp = requests.post(
+        f'https://api.spotify.com/v1/users/{curr_user.spotify_id}/playlists',
         headers={
             'Authorization': "Bearer " + access_token
+        },
+        data=vars(playlist)
+    )
+    if gen_plist_resp.status_code != 200:
+        raise HTTPException(
+            status_code=gen_plist_resp.status_code,
+            details=gen_plist_resp.json()['error']['message']
+        )
+    gen_plist_resp = gen_plist_resp.json()
+    mood.playlist_id = gen_plist_resp['id']
+    add_songs_resp = requests.post(
+        f'https://api.spotify.com/v1/playlists/{mood.playlist_id}/tracks',
+        headers={
+            'Authorization': "Bearer " + access_token
+        },
+        data={
+            'uris': [f'spotify:track:{s}' for s in mood.songs],
+            'position': 0
         }
     )
+    if add_songs_resp.status_code != 200:
+        raise HTTPException(
+            status_code=gen_plist_resp.status_code,
+            details=gen_plist_resp.json()['error']['message']
+        )
+    await engine.save(mood)
+    return {
+        'status': 'success',
+        'spotify_playlist_href': mood.spotify_playlist_href,
+        'spotify_playlist_id': mood.spotify_playlist_id
+    }

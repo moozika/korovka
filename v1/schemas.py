@@ -41,3 +41,8 @@ class Dashboard(BaseModel):
     liked_moodz: List[DashboardMood]
 
 
+class PlayListBody(BaseModel):
+    name: str
+    public: bool
+    collaborative: bool
+    description: str

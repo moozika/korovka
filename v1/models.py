@@ -26,3 +26,4 @@ class Mood(Model):
     songs: List[str]
     created_date: str = str(datetime.datetime.now())
     author: User = Reference()
+    playlist_id: Optional[str] = ''
