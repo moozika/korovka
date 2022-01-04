@@ -240,3 +240,7 @@ async def convert_to_playlist(
         'spotify_playlist_href': mood.spotify_playlist_href,
         'spotify_playlist_id': mood.spotify_playlist_id
     }
+
+# either create a sync endpoint or add/delete songs to/from playlists during the local add/delete
+# TODO: fix response_model schemas
+# TODO: write api tests
