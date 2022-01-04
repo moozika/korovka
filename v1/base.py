@@ -10,17 +10,17 @@ import datetime
 import requests
 import bson
 
-base_router = APIRouter()
+router = APIRouter()
 
 
-@base_router.get("/status")
+@router.get("/status")
 async def status():
     return {
         'status': 'success'
     }
 
 
-@base_router.post("/user", response_model=User)
+@router.post("/user", response_model=User)
 async def init_user(
     access_token: str = Header(None, convert_underscores=False)
 ):
@@ -72,7 +72,7 @@ async def init_user(
     return new_user
 
 
-@base_router.get('/dashboard', response_model=Dashboard)
+@router.get('/dashboard', response_model=Dashboard)
 async def dashboard(
     access_token: str = Header(None, convert_underscores=False)
 ):
@@ -125,7 +125,7 @@ async def dashboard(
     return dashboard
 
 
-@base_router.get('/vibes')
+@router.get('/vibes')
 async def get_vibes(
     access_token: str = Header(None, convert_underscores=False)
 ):
@@ -133,7 +133,7 @@ async def get_vibes(
         return vibes
 
 
-@base_router.post('/vibes')
+@router.post('/vibes')
 async def create_vibe(
     access_token: str = Header(None, convert_underscores=False)
 ):

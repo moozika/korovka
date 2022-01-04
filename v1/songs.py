@@ -3,10 +3,10 @@ from fastapi import Header, HTTPException, APIRouter
 # std imports
 import requests
 
-songs_router = APIRouter()
+router = APIRouter()
 
 
-@songs_router.get("/search")
+@router.get("/search")
 async def search_songs(
     query: str,
     access_token: str = Header(None, convert_underscores=False)
@@ -34,7 +34,7 @@ async def search_songs(
     return songs
 
 
-@songs_router.get('/{id}')
+@router.get('/{id}')
 async def get_song_by_id(
     id: str,
     access_token: str = Header(None, convert_underscores=False)

@@ -2,7 +2,6 @@ from typing import Optional
 from pydantic import BaseModel
 from typing import List, Dict, Any
 import datetime
-# import bson
 
 
 class MoodBody(BaseModel):
@@ -40,3 +39,5 @@ class Dashboard(BaseModel):
     user_email: str
     moodz: List[DashboardMood]
     liked_moodz: List[DashboardMood]
+
+

@@ -9,10 +9,10 @@ from v1.db import engine, token_to_id
 import requests
 import bson
 
-mood_router = APIRouter()
+router = APIRouter()
 
 
-@mood_router.post('/mood')
+@router.post('/mood')
 async def create_mood(
     mood: MoodBody,
     access_token: str = Header(None, convert_underscores=False)
@@ -33,7 +33,7 @@ async def create_mood(
     return new_mood
 
 
-@mood_router.post('/{mood_id}/edit')
+@router.post('/{mood_id}/edit')
 async def edit_mood(
     mood_id: str,
     update: MoodBody,
@@ -61,7 +61,7 @@ async def edit_mood(
     return {'status': 'success'}
 
 
-@mood_router.delete('/{mood_id}')
+@router.delete('/{mood_id}')
 async def delete_mood(
     mood_id: str,
     access_token: str = Header(None, convert_underscores=False)
@@ -88,7 +88,7 @@ async def delete_mood(
     return {'status': 'Deleted successfully'}
 
 
-@mood_router.get('/{mood_id}', response_model=DisplayMood)
+@router.get('/{mood_id}', response_model=DisplayMood)
 async def get_mood(mood_id: str):
     mood = await engine.find_one(Mood, Mood.id == bson.ObjectId(mood_id))
     if mood is None:
@@ -111,7 +111,7 @@ async def get_mood(mood_id: str):
     return m
 
 
-@mood_router.get('/{mood_id}/recommendations')
+@router.get('/{mood_id}/recommendations')
 async def get_mood_recommendations(
     mood_id: str,
     access_token: str = Header(None, convert_underscores=False)
@@ -153,7 +153,7 @@ async def get_mood_recommendations(
     return songs
 
 
-@mood_router.get('/{mood_id}/like')
+@router.get('/{mood_id}/like')
 async def like_mood(
     mood_id: str,
     access_token: str = Header(None, convert_underscores=False)
@@ -175,7 +175,7 @@ async def like_mood(
     return {'status': 'completed'}
 
 
-@mood_router.post('/{mood_id}/song/{song_id}')
+@router.post('/{mood_id}/song/{song_id}')
 async def add_song_to_mood(
     mood_id: str,
     song_id: str,
@@ -198,7 +198,7 @@ async def add_song_to_mood(
     return {'status': 'completed'}
 
 
-@mood_router.delete('/{mood_id}/song/{song_id}')
+@router.delete('/{mood_id}/song/{song_id}')
 async def delete_song_from_mood(
     mood_id: str,
     song_id: str,
@@ -221,7 +221,7 @@ async def delete_song_from_mood(
     return {'status': 'completed'}
 
 
-@mood_router.post('/{mood_id}/set_main_song/{song_id}')
+@router.post('/{mood_id}/set_main_song/{song_id}')
 async def set_main_song(
     mood_id: str,
     song_id: str,
@@ -247,3 +247,4 @@ async def set_main_song(
         mood.main_song = song_id
     engine.save(mood)
     return {'added': song_id}
+
