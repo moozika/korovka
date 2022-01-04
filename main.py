@@ -2,9 +2,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from v1.api import v1_router
 from v2.api import v2_router
+from fastapi.middleware.gzip import GZipMiddleware
 
 
 app = FastAPI()
+
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 origins = [
     "http://localhost:3000",
