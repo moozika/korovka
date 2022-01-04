@@ -25,3 +25,10 @@ app.add_middleware(
 
 app.include_router(v1_router, prefix="/api/v1", tags=['v1'])
 app.include_router(v2_router, prefix="/api/v2", tags=['v2'])
+
+
+@app.get('/')
+async def root():
+    return {
+        'status': 'available'
+    }
