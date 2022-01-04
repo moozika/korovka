@@ -1,5 +1,6 @@
 # fastapi imports
 from fastapi import Header, HTTPException, APIRouter
+from korovka.v1.utils import verify_mood_owner
 # models and utils imports
 from v1.schemas import DisplayMood, MoodBody
 from v1.models import Mood
@@ -41,16 +42,7 @@ async def edit_mood(
 ):
     curr_user = await get_user(get_email(token_to_id, access_token))
     mood = await engine.find_one(Mood, Mood.id == bson.ObjectId(mood_id))
-    if mood is None:
-        raise HTTPException(
-            status_code=404,
-            detail='Mood with id ' + mood_id + 'not found.'
-        )
-    if mood.author.email != curr_user.email:
-        raise HTTPException(
-            status_code=405,
-            detail='User does not have permission to edit this mood.'
-        )
+    verify_mood_owner(mood, curr_user, mood_id)
     mood.description = update.description
     mood.name = update.name
     mood.vibes = update.vibes
@@ -68,16 +60,7 @@ async def delete_mood(
 ):
     curr_user = await get_user(get_email(token_to_id, access_token))
     mood = await engine.find_one(Mood, Mood.id == bson.ObjectId(mood_id))
-    if mood is None:
-        raise HTTPException(
-            status_code=404,
-            detail='Mood with id ' + mood_id + 'not found.'
-        )
-    if mood.author != curr_user:
-        raise HTTPException(
-            status_code=405,
-            detail='User does not have permission to delete this mood.'
-        )
+    verify_mood_owner(mood, curr_user, mood_id)
     curr_user.moods.remove(mood_id)
     try:
         curr_user.liked.remove(mood_id)
@@ -118,16 +101,7 @@ async def get_mood_recommendations(
 ):
     curr_user = await get_user(get_email(token_to_id, access_token))
     mood = await engine.find_one(Mood, Mood.id == bson.ObjectId(mood_id))
-    if mood is None:
-        raise HTTPException(
-            status_code=404,
-            detail='Mood with id ' + mood_id + ' not found.'
-        )
-    if mood.author.email != curr_user.email:
-        raise HTTPException(
-            status_code=405,
-            detail='User does not have permission to delete this mood.'
-        )
+    verify_mood_owner(mood, curr_user, mood_id)
     s_tracks = mood.songs[:5]
     reqs_resp = requests.get(
         'https://api.spotify.com/v1/recommendations',
@@ -183,16 +157,7 @@ async def add_song_to_mood(
 ):
     curr_user = await get_user(get_email(token_to_id, access_token))
     mood = await engine.find_one(Mood, Mood.id == bson.ObjectId(mood_id))
-    if mood is None:
-        raise HTTPException(
-            status_code=404,
-            detail='Mood with id ' + mood_id + ' not found.'
-        )
-    if mood.author.email != curr_user.email:
-        raise HTTPException(
-            status_code=405,
-            detail='User does not have permission to delete this mood.'
-        )
+    verify_mood_owner(mood, curr_user, mood_id)
     mood.songs.append(song_id)
     await engine.save(mood)
     return {'status': 'completed'}
@@ -206,16 +171,7 @@ async def delete_song_from_mood(
 ):
     curr_user = await get_user(get_email(token_to_id, access_token))
     mood = await engine.find_one(Mood, Mood.id == bson.ObjectId(mood_id))
-    if mood is None:
-        raise HTTPException(
-            status_code=404,
-            detail='Mood with id ' + mood_id + ' not found.'
-        )
-    if mood.author.email != curr_user.email:
-        raise HTTPException(
-            status_code=405,
-            detail='User does not have permission to delete this mood.'
-        )
+    verify_mood_owner(mood, curr_user, mood_id)
     mood.songs.remove(song_id)
     await engine.save(mood)
     return {'status': 'completed'}
@@ -229,16 +185,7 @@ async def set_main_song(
 ):
     curr_user = await get_user(get_email(token_to_id, access_token))
     mood = await engine.find_one(Mood, Mood.id == bson.ObjectId(mood_id))
-    if mood is None:
-        raise HTTPException(
-            status_code=404,
-            detail='Mood with id ' + mood_id + ' not found.'
-        )
-    if mood.author.email != curr_user.email:
-        raise HTTPException(
-            status_code=405,
-            detail='User does not have permission to delete this mood.'
-        )
+    verify_mood_owner(mood, curr_user, mood_id)
     if song_id not in mood.songs:
         return {'message': 'Song id is not in given mood\'s songs'}, 205
     if mood.main_song == '':
@@ -248,3 +195,16 @@ async def set_main_song(
     engine.save(mood)
     return {'added': song_id}
 
+
+@router.post('/{mood_id}/playlist/generate')
+async def convert_to_playlist(
+    mood_id: str,
+    access_token: str = Header(None, convert_underscores=False)
+):
+    curr_user = await get_user(get_email(token_to_id, access_token))
+    search_resp = requests.get(
+        'https://api.spotify.com/v1/search',
+        headers={
+            'Authorization': "Bearer " + access_token
+        }
+    )
