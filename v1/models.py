@@ -64,4 +64,3 @@ class Dashboard(BaseModel):
     user_email: str
     moodz: List[DashboardMood]
     liked_moodz: List[DashboardMood]
-
