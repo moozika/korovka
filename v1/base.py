@@ -1,7 +1,8 @@
 # fastapi imports
 from fastapi import Header, HTTPException, APIRouter
 # models and utils imports
-from v1.models import User, Dashboard, Mood, DashboardMood
+from v1.models import User, Mood
+from v1.schemas import Dashboard, DashboardMood
 from v1.utils import get_email
 from v1.db import token_to_id, engine, vibes
 # std imports

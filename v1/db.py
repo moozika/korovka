@@ -22,6 +22,7 @@ client = AsyncIOMotorClient(
 engine = AIOEngine(motor_client=client, database=f'moozika_{MONGODB_ENV}')
 
 token_to_id = dict()
+blacklist_token = set()
 
 vibes_dict = {
     'Uplifting': ['yellow-100', 'yellow-300'],

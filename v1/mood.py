@@ -1,9 +1,9 @@
 # fastapi imports
 from fastapi import Header, HTTPException, APIRouter
 # models and utils imports
-from v1.models import DisplayMood
-from v1.models import User, Mood, MoodBody
-from v1.utils import get_email
+from v1.schemas import DisplayMood, MoodBody
+from v1.models import Mood
+from v1.utils import get_email, get_user
 from v1.db import engine, token_to_id
 # std imports
 import requests
@@ -17,13 +17,7 @@ async def create_mood(
     mood: MoodBody,
     access_token: str = Header(None, convert_underscores=False)
 ):
-    user_email = get_email(token_to_id, access_token)
-    if user_email is None:
-        raise HTTPException(
-            status_code=400,
-            detail='Failed to get user id from cache'
-        )
-    curr_user = await engine.find_one(User, User.email == user_email)
+    curr_user = await get_user(get_email(token_to_id, access_token))
     new_mood = Mood(
         likes=1,
         author=curr_user,
@@ -45,13 +39,7 @@ async def edit_mood(
     update: MoodBody,
     access_token: str = Header(None, convert_underscores=False)
 ):
-    user_email = get_email(token_to_id, access_token)
-    if user_email is None:
-        raise HTTPException(
-            status_code=400,
-            detail='Failed to get user id from cache'
-        )
-    curr_user = await engine.find_one(User, User.email == user_email)
+    curr_user = await get_user(get_email(token_to_id, access_token))
     mood = await engine.find_one(Mood, Mood.id == bson.ObjectId(mood_id))
     if mood is None:
         raise HTTPException(
@@ -78,13 +66,7 @@ async def delete_mood(
     mood_id: str,
     access_token: str = Header(None, convert_underscores=False)
 ):
-    user_email = get_email(token_to_id, access_token)
-    if user_email is None:
-        raise HTTPException(
-            status_code=400,
-            detail='Failed to get user id from cache'
-        )
-    curr_user = await engine.find_one(User, User.email == user_email)
+    curr_user = await get_user(get_email(token_to_id, access_token))
     mood = await engine.find_one(Mood, Mood.id == bson.ObjectId(mood_id))
     if mood is None:
         raise HTTPException(
@@ -134,13 +116,7 @@ async def get_mood_recommendations(
     mood_id: str,
     access_token: str = Header(None, convert_underscores=False)
 ):
-    user_email = get_email(token_to_id, access_token)
-    if user_email is None:
-        raise HTTPException(
-            status_code=400,
-            detail='Failed to get user id from cache'
-        )
-    curr_user = await engine.find_one(User, User.email == user_email)
+    curr_user = await get_user(get_email(token_to_id, access_token))
     mood = await engine.find_one(Mood, Mood.id == bson.ObjectId(mood_id))
     if mood is None:
         raise HTTPException(
@@ -182,13 +158,7 @@ async def like_mood(
     mood_id: str,
     access_token: str = Header(None, convert_underscores=False)
 ):
-    user_email = get_email(token_to_id, access_token)
-    if user_email is None:
-        raise HTTPException(
-            status_code=400,
-            detail='Failed to get user id from cache'
-        )
-    curr_user = await engine.find_one(User, User.email == user_email)
+    curr_user = await get_user(get_email(token_to_id, access_token))
     mood = await engine.find_one(Mood, Mood.id == bson.ObjectId(mood_id))
     if mood is None:
         raise HTTPException(
@@ -211,13 +181,7 @@ async def add_song_to_mood(
     song_id: str,
     access_token: str = Header(None, convert_underscores=False)
 ):
-    user_email = get_email(token_to_id, access_token)
-    if user_email is None:
-        raise HTTPException(
-            status_code=400,
-            detail='Failed to get user id from cache'
-        )
-    curr_user = await engine.find_one(User, User.email == user_email)
+    curr_user = await get_user(get_email(token_to_id, access_token))
     mood = await engine.find_one(Mood, Mood.id == bson.ObjectId(mood_id))
     if mood is None:
         raise HTTPException(
@@ -240,13 +204,7 @@ async def delete_song_from_mood(
     song_id: str,
     access_token: str = Header(None, convert_underscores=False)
 ):
-    user_email = get_email(token_to_id, access_token)
-    if user_email is None:
-        raise HTTPException(
-            status_code=400,
-            detail='Failed to get user id from cache'
-        )
-    curr_user = await engine.find_one(User, User.email == user_email)
+    curr_user = await get_user(get_email(token_to_id, access_token))
     mood = await engine.find_one(Mood, Mood.id == bson.ObjectId(mood_id))
     if mood is None:
         raise HTTPException(
@@ -269,13 +227,7 @@ async def set_main_song(
     song_id: str,
     access_token: str = Header(None, convert_underscores=False)
 ):
-    user_email = get_email(token_to_id, access_token)
-    if user_email is None:
-        raise HTTPException(
-            status_code=400,
-            detail='Failed to get user id from cache'
-        )
-    curr_user = await engine.find_one(User, User.email == user_email)
+    curr_user = await get_user(get_email(token_to_id, access_token))
     mood = await engine.find_one(Mood, Mood.id == bson.ObjectId(mood_id))
     if mood is None:
         raise HTTPException(
