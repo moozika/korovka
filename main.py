@@ -3,7 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from v1.api import v1_router
 from v2.api import v2_router
 from fastapi.middleware.gzip import GZipMiddleware
-
+from fastapi_restful.tasks import repeat_every
+from v1.db import token_to_id, blacklist_token
 
 app = FastAPI()
 
@@ -35,3 +36,12 @@ async def root():
     return {
         'status': 'available'
     }
+
+
+@app.on_event("startup")
+@repeat_every(seconds=60*60)
+def remove_expired_tokens():
+    for token, obj in token_to_id.items:
+        print(obj)
+    for token, dt in blacklist_token:
+        print(dt)
