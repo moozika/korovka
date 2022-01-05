@@ -1,4 +1,5 @@
 from typing import Optional
+from v1.models import Vibe
 from pydantic import BaseModel
 from typing import List, Dict, Any
 import datetime
@@ -6,7 +7,7 @@ import datetime
 
 class MoodBody(BaseModel):
     name: str
-    vibes: List[str]
+    vibes: List[Vibe]
     songs: List[str]
     description: str
 
@@ -28,7 +29,7 @@ class DisplayMood(BaseModel):
     likes: int
     liked: Optional[bool]
     created_on: str = str(datetime.datetime.now())
-    vibes: List[Dict[str, Any]]
+    vibes: List[Vibe]
     songs: Optional[List[str]]
     description: str
     author: str
