@@ -4,7 +4,7 @@ from fastapi import Header, HTTPException, APIRouter
 from v1.models import User, Mood
 from v1.schemas import Dashboard, DashboardMood
 from v1.utils import get_email
-from v1.db import token_to_id, engine, vibes, blacklist_token
+from v1.db import token_to_id, engine, blacklist_token
 # std imports
 import datetime
 import requests

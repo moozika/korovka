@@ -85,7 +85,7 @@ async def get_mood(mood_id: str):
         created_on=mood.created_date,
         likes=mood.likes,
         # liked=str(mood.id) in user.liked,
-        vibes=[{'name': m, 'colors': mood.vibes[m]} for m in mood.vibes],
+        vibes=mood.vibes,
         songs=mood.songs,
         description=mood.description,
         author=mood.author.display_name,
