@@ -13,7 +13,7 @@ import bson
 router = APIRouter()
 
 
-@router.post('/mood')
+@router.post('')
 async def create_mood(
     mood: MoodBody,
     access_token: str = Header(None, convert_underscores=False)
