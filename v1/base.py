@@ -107,7 +107,7 @@ async def dashboard(
         await engine.find_one(
             Mood,
             Mood.id == bson.ObjectId(mood)
-        ) for mood in list(filter(user.liked, lambda m: m not in user.moods))
+        ) for mood in filter(lambda m: m not in user.moods, user.liked)
     ]
     dashboard = Dashboard(
         user_email=user.email,
