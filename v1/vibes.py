@@ -4,7 +4,7 @@ from v1.db import vibes
 router = APIRouter()
 
 
-@router.get('/vibes')
+@router.get('/')
 async def get_vibes(
     access_token: str = Header(None, convert_underscores=False)
 ):
@@ -12,7 +12,7 @@ async def get_vibes(
         return vibes
 
 
-@router.post('/vibes')
+@router.post('/')
 async def create_vibe(
     access_token: str = Header(None, convert_underscores=False)
 ):
