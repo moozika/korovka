@@ -18,7 +18,7 @@ class DashboardMood(BaseModel):
     likes: int
     liked: Optional[bool]
     created_on: str = str(datetime.datetime.now())
-    vibes: List[Dict[str, Any]]
+    vibes: List[Vibe]
     songs: Optional[List[str]]
     description: str
 

@@ -118,7 +118,7 @@ async def dashboard(
                 created_on=m.created_date,
                 likes=m.likes,
                 liked=str(m.id) in user.liked,
-                vibes=[{'name': m, 'colors': vibes[m]} for m in m.vibes],
+                vibes=m.vibes,
                 songs=m.songs,
                 num_songs=len(m.songs),
                 description=m.description
@@ -131,7 +131,7 @@ async def dashboard(
                 likes=m.likes,
                 num_songs=len(m.songs),
                 liked=str(m.id) in user.liked,
-                vibes=[{'name': m, 'colors': vibes[m]} for m in m.vibes],
+                vibes=m.vibes,
                 description=m.description
             ) for m in liked_moods
         ]
