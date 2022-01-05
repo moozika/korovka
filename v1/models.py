@@ -1,8 +1,12 @@
 from typing import Optional
-from odmantic import Model, Reference
+from odmantic import Model, EmbeddedModel, Reference
 from typing import List
 import datetime
-# import bson
+
+
+class Vibe(EmbeddedModel):
+    name: str
+    colors: List[str]
 
 
 class User(Model):
@@ -15,6 +19,7 @@ class User(Model):
     profile_pic_url: str
     moods: List[str]
     liked: List[str]
+    vibes: List[Vibe] = []
 
 
 class Mood(Model):

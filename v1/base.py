@@ -51,6 +51,8 @@ async def init_user(
         else:
             curr_user.profile_pic_url = ''
         curr_user.display_name = user_json['display_name']
+        if not curr_user.vibes:
+            curr_user.vibes = []
         await engine.save(curr_user)
         token_to_id[access_token] = curr_user.email
         return curr_user
@@ -64,7 +66,8 @@ async def init_user(
         display_name=user_json['display_name'],
         spotify_id=user_json['id'],
         liked=[],
-        moods=[]
+        moods=[],
+        vibes=[]
     )
     await engine.save(new_user)
     token_to_id[access_token] = new_user.email
@@ -76,6 +79,7 @@ async def init_user(
 async def logout(
     access_token: str = Header(None, convert_underscores=False)
 ):
+    token_to_id.pop(access_token)
     blacklist_token[access_token] = datetime.datetime.utcnow()
     return {'status': 'success'}
 
