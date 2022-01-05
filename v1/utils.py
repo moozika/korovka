@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 import requests
-from korovka.v1.models import Mood
+from v1.models import Mood
 from v1.db import engine
 from v1.models import User
 

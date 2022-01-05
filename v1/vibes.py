@@ -1,5 +1,6 @@
 from fastapi import Header, APIRouter
-from v1.db import vibes
+from v1.db import vibes, token_to_id
+from v1.utils import get_email, get_user
 
 router = APIRouter()
 
@@ -16,4 +17,5 @@ async def get_vibes(
 async def create_vibe(
     access_token: str = Header(None, convert_underscores=False)
 ):
+    curr_user = await get_user(get_email(token_to_id, access_token))
     return {}
