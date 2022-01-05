@@ -17,10 +17,11 @@ async def get_vibes(
         curr_user = await get_user(get_email(token_to_id, access_token))
         return vibes + curr_user.vibes
 
+
 @router.post('')
 async def create_vibes(
     vibes: List[Vibe],
-    access_token: str = Header(None, convert_underscores=False),
+    access_token: str = Header(None, convert_underscores=False)
 ):
     curr_user = await get_user(get_email(token_to_id, access_token))
     curr_user.vibes.extend(vibes)

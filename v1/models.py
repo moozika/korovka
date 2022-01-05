@@ -26,7 +26,7 @@ class Mood(Model):
     name: str
     description: str
     likes: int
-    vibes: List[str]
+    vibes: List[Vibe]
     main_song: Optional[str] = ''
     songs: List[str]
     created_date: str = str(datetime.datetime.now())
