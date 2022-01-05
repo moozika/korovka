@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from v1 import songs, mood, base, vibes
 
+
 v1_router = APIRouter()
 
 
