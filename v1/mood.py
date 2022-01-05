@@ -160,6 +160,21 @@ async def add_song_to_mood(
     verify_mood_owner(mood, curr_user, mood_id)
     mood.songs.append(song_id)
     await engine.save(mood)
+    if mood.playlist_id != '' or mood.playlist_id is not None:
+        playlist_update_resp = requests.post(
+            f'https://api.spotify.com/v1/playlist/{mood.playlist_id}/tracks',
+            headers={
+                'Authorization': "Bearer " + access_token
+            },
+            params={
+                'uris': f'spotify:track:{song_id}'
+            }
+        )
+        if playlist_update_resp.status_code != 201:
+            raise HTTPException(
+                status_code=playlist_update_resp.status_code,
+                details=playlist_update_resp.json()
+            )
     return {'status': 'completed'}
 
 
@@ -174,6 +189,21 @@ async def delete_song_from_mood(
     verify_mood_owner(mood, curr_user, mood_id)
     mood.songs.remove(song_id)
     await engine.save(mood)
+    if mood.playlist_id != '' or mood.playlist_id is not None:
+        playlist_update_resp = requests.delete(
+            f'https://api.spotify.com/v1/playlist/{mood.playlist_id}/tracks',
+            headers={
+                'Authorization': "Bearer " + access_token
+            },
+            data={
+                'tracks': [{'uri': f'spotify:track:{song_id}'}]
+            }
+        )
+        if playlist_update_resp.status_code != 201:
+            raise HTTPException(
+                status_code=playlist_update_resp.status_code,
+                details=playlist_update_resp.json()
+            )
     return {'status': 'completed'}
 
 
