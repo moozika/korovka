@@ -4,7 +4,7 @@ from fastapi import Header, HTTPException, APIRouter
 from v1.models import User, Mood
 from v1.schemas import Dashboard, DashboardMood
 from v1.utils import get_email
-from v1.db import token_to_id, engine, vibes
+from v1.db import token_to_id, engine, vibes, blacklist_token
 # std imports
 import datetime
 import requests
@@ -72,6 +72,16 @@ async def init_user(
     return new_user
 
 
+@router.post('/logout')
+async def logout(
+    access_token: str = Header(None, convert_underscores=False)
+):
+    blacklist_token[access_token] = datetime.datetime.utcnow()
+    return {'status': 'success'}
+
+# TODO: add background tasks to cleanout tokens older than 60 min
+
+
 @router.get('/dashboard', response_model=Dashboard)
 async def dashboard(
     access_token: str = Header(None, convert_underscores=False)
@@ -123,18 +133,3 @@ async def dashboard(
         ]
     )
     return dashboard
-
-
-@router.get('/vibes')
-async def get_vibes(
-    access_token: str = Header(None, convert_underscores=False)
-):
-    if access_token is None:
-        return vibes
-
-
-@router.post('/vibes')
-async def create_vibe(
-    access_token: str = Header(None, convert_underscores=False)
-):
-    return {}

@@ -1,6 +1,6 @@
 # fastapi imports
 from fastapi import Header, HTTPException, APIRouter
-from korovka.v1.utils import verify_mood_owner
+from v1.utils import verify_mood_owner
 # models and utils imports
 from v1.schemas import DisplayMood, MoodBody, PlaylistBody
 from v1.models import Mood
@@ -237,10 +237,11 @@ async def convert_to_playlist(
     await engine.save(mood)
     return {
         'status': 'success',
-        'spotify_playlist_href': mood.spotify_playlist_href,
-        'spotify_playlist_id': mood.spotify_playlist_id
+        'spotify_playlist_id': mood.playlist_id
     }
 
-# either create a sync endpoint or add/delete songs to/from playlists during the local add/delete
+# either create a sync endpoint
+# or add/delete songs to/from playlists during the local add/delete
+
 # TODO: fix response_model schemas
 # TODO: write api tests
