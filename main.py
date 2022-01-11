@@ -41,7 +41,10 @@ async def root():
 @app.on_event("startup")
 @repeat_every(seconds=60*60)
 def remove_expired_tokens():
+    print('running')
     for token, obj in token_to_id.items:
         print(obj)
     for token, dt in blacklist_token:
         print(dt)
+
+# TODO: finish token cache cleaning

@@ -24,12 +24,28 @@ engine = AIOEngine(motor_client=client, database=f'moozika_{MONGODB_ENV}')
 token_to_id = dict()
 blacklist_token = dict()
 
+# vibes_dict = {
+#     'Uplifting': ['yellow-100', 'yellow-300'],
+#     'Romantic': ['red-200', 'red-400'],
+#     'Calm': ['blue-200', 'blue-400'],
+#     'Fresh': ['green-300', 'green-500'],
+#     'Eclectic': ['purple-300', 'purple-500'],
+#     'Energetic': ['orange-400', 'orange-600']
+# }
 vibes_dict = {
-    'Uplifting': ['yellow-100', 'yellow-300'],
-    'Romantic': ['red-200', 'red-400'],
-    'Calm': ['blue-200', 'blue-400'],
-    'Fresh': ['green-300', 'green-500'],
-    'Eclectic': ['purple-300', 'purple-500'],
-    'Energetic': ['orange-400', 'orange-600']
+    'Aggressive':  ['gray-900', 'red-700'],
+    'Atmospheric':  ['gray-200', 'blue-200'],
+    'Calm':  ['sky-100', 'sky-800'],
+    'Dramatic':  ['amber-400', 'red-700'],
+    'Dreamy':   ['orange-200', 'pink-200'],
+    'Energetic':  ['amber-300', 'purple-600'],
+    'Gloomy': ['indigo-200', 'gray-900'],
+    'Playful': ['pink-300', 'green-500'],
+    'Uplifting':  ['yellow-300', 'yellow-50'],
+    'Passionate': ['pink-700', 'red-900'],
+    'Quirky': ['fuchsia-700', 'lime-500'],
+    'Sentimental': ['sky-200', 'lime-500'],
+    'Smooth': ['pink-900', 'purple-900']
 }
+
 vibes = [{'name': k, 'colors': v} for k, v in vibes_dict.items()]
